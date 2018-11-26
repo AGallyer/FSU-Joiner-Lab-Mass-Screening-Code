@@ -7,7 +7,8 @@ library(tidyverse)
 library(mailR)
 library(readxl)
 #Function to import mass screening data, identify suicide ideators or attempters, and send recruitment email.
-mass_screening_email <- function(email_subject = "Psychology Study Invitation", participants = "self", n = NA, score = NA) {
+mass_screening_email <- function(email_subject = "Psychology Study Invitation", 
+                                 participants = "self", n = NA, score = NA) {
   print("Click on mass screening file")
   mass_path <- file.choose()
   print("Click on email body file")
@@ -70,6 +71,14 @@ mass_screening_email <- function(email_subject = "Psychology Study Invitation", 
         mass_data2 <- mass_data2 %>% 
               mutate("dsiss" = Joiner_SR1 + Joiner_SR2 + Joiner_SR3 + Joiner_SR4) %>% 
               filter(dsiss >= score & !is.na(email)) 
+        email_addresses <- mass_data2$email
+  }
+  if (participants == "all"){
+        mass_data2 <- mass_data %>%
+              select(Email) %>% 
+              rename("email" = Email) %>% 
+              filter(!is.na(email)) %>% 
+              sample_n(size = n)
         email_addresses <- mass_data2$email
   }
   if (participants == "self"){
